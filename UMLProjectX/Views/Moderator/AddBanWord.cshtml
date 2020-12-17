@@ -1,0 +1,25 @@
+﻿@using UMLProjectX.DAL.Models
+@model UMLProjectX.Models.BanWordModel
+
+<form asp-action="AddBanWord" asp-controller="Moderator">
+    <div class="validation" asp-validation-summary="ModelOnly" />
+    <div>
+        <div class="form-group">
+            <input type="text" placeholder="Слово/Ссылка" asp-for="Word" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Добавить" class="btn btn-outline-dark" />
+        </div>
+    </div>
+</form>
+@if (ViewBag.BanWords != null)
+{
+    @foreach (var banWord in (IEnumerable<BanWord>)ViewBag.BanWords)
+    {
+        <div class="film-review-main">
+            <div>
+                @banWord.Content, добавил <a href="@Url.Action("Profile", "Account", new {login = banWord.Adder})">@banWord.Adder</a>
+            </div>
+        </div>
+    }
+}

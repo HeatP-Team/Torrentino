@@ -1,0 +1,24 @@
+﻿@using UMLProjectX.DAL.Models
+<div>
+    <h3>
+        @ViewBag.Login
+    </h3>
+    @foreach (var review in (IEnumerable<Review>)ViewBag.Reviews)
+    {
+        <div class="film-review-main">
+            <div>
+                @review.FilmName, @review.Time <span style="padding-left: 50px"><b>@review.Score</b></span>
+            </div>
+            <div>
+                @review.ReviewText
+            </div>
+        </div>
+    }
+    
+    @if (ViewBag.Mod)
+    {
+        <a href="@Url.Action("BanUser", "Moderator", new {login = @ViewBag.Login})">Заблокировать пользователя</a>
+    }
+</div>
+
+

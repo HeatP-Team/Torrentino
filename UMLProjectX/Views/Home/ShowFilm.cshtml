@@ -1,0 +1,130 @@
+﻿@using UMLProjectX.DAL.Models
+@model UMLProjectX.DAL.Models.Review
+
+<div>
+    <div class="show-film-main">
+        <div>
+            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(ViewBag.Picture))" style="width: 300px; height: 450px; margin-right: 10px; border-radius: 10px" />
+        </div>
+        <div class="show-film-info">
+            <h3>
+                @ViewBag.RusName
+            </h3>
+            <p>
+                <b>Cредняя оценка: </b> @Math.Round(ViewBag.AvgReviewScore, 2)
+            </p>
+            <p>
+                <b>Год выхода: </b> @ViewBag.Year
+            </p>
+            <p>
+                <b>Жанры: </b> @ViewBag.Genres
+            </p>
+            <p>
+                <b>Режиссер: </b> @ViewBag.Director
+            </p>
+            <p>
+                <b>Описание: </b> @ViewBag.Description
+            </p>
+            <p>
+                <a href="@ViewBag.Kinopoisk">Кинопоиск</a>
+            </p>
+            <p>
+                <a href="@ViewBag.Ivi">Иви</a>
+            </p>
+            @if (ViewBag.Mod)
+            {
+                <a href="@Url.Action("EditDeleteFilm", "Moderator", new {filmId = @ViewBag.FilmId})">Изменить содержимое страницы</a>
+            }
+        </div>
+    </div>
+    <div>
+    </div>
+    @if (User.Identity.Name != null)
+    {
+        if (ViewBag.PersonalReview == null)
+        {
+            <form asp-action="Review" asp-controller="Home" asp-anti-forgery="true">
+                <div class="validation" asp-validation-summary="ModelOnly"></div>
+                <div class="review-full">
+                    <input type="hidden" value="@ViewBag.FilmId" asp-for="FilmId" />
+                    <div class="review-main">
+                        <div class="form-group">
+                            <label asp-for="Score">Оценкa:</label>
+                            <input type="text" asp-for="Score" />
+                            <span asp-validation-for="Score" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Оставить отзыв" class="btn btn-outline-dark" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="review-text-f" placeholder="Отзыв" asp-for="ReviewText"></textarea>
+                        <span asp-validation-for="ReviewText" />
+                    </div>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="film-review-main" id="myReviewRes" style="display: block;">
+                <div>
+                    <a href="@Url.Action("Profile", "Account", new {login = ViewBag.PersonalReview.UserLogin})">@ViewBag.PersonalReview.UserLogin</a>, @ViewBag.PersonalReview.Time <span style="padding-left: 50px"><b>@ViewBag.PersonalReview.Score</b></span>
+                </div>
+                <div>
+                    @ViewBag.PersonalReview.ReviewText
+                </div>
+                <input value="Изменить отзыв" id="visReview" onclick="changeVis()" class="btn btn-outline-dark" />
+            </div>
+            <form asp-action="Review" asp-controller="Home" asp-anti-forgery="true" id="myReviewForm" style="display: none;">
+                <div class="validation" asp-validation-summary="ModelOnly"></div>
+                <div class="review-full">
+                    <input type="hidden" value="@ViewBag.FilmId" asp-for="FilmId" />
+                    <div class="review-main">
+                        <div class="form-group">
+                            <label asp-for="Score">Оценкa:</label>
+                            <input type="text" asp-for="Score" value="@ViewBag.PersonalReview.Score"/>
+                            <span asp-validation-for="Score" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Изменить отзыв" class="btn btn-outline-dark" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea class="review-text-f" placeholder="Отзыв" asp-for="ReviewText">@ViewBag.PersonalReview.ReviewText</textarea>
+                        <span asp-validation-for="ReviewText" />
+                    </div>
+                </div>
+                <input id="visForm" onclick="changeVis()" value="Отмена" class="btn btn-outline-dark" />
+            </form>
+        }
+    }
+    @foreach (var review in (IEnumerable<Review>)ViewBag.Reviews)
+    {
+<div class="film-review-main">
+    <div>
+        <a href="@Url.Action("Profile", "Account", new {login = @review.UserLogin})">@review.UserLogin</a>, @review.Time <span style="padding-left: 50px"><b>@review.Score</b></span>
+    </div>
+    <div>
+        @review.ReviewText
+    </div>
+    @if (ViewBag.Mod)
+    {
+        <a href="@Url.Action("BanComment", "Moderator", new {reviewId = @review.ReviewId, filmId = @review.FilmId})">Забанить комментарий</a>
+    }
+</div>
+    }
+</div>
+
+<script type="text/javascript">
+    function changeVis() {
+        var firstF = document.getElementById("myReviewRes");
+        var secondF = document.getElementById("myReviewForm");
+        if (event.target.id === "visReview") {
+            firstF.style.display = "none";
+            secondF.style.display = "block";
+        } else {
+            firstF.style.display = "block";
+            secondF.style.display = "none";
+        }
+    }
+</script>

@@ -1,0 +1,49 @@
+﻿@using System.Collections
+@using UMLProjectX.DAL.Models
+@{
+    ViewData["Title"] = "Home Page";
+}
+@model UMLProjectX.Models.FilmSearcherModel
+<form asp-action="Index" asp-controller="Home">
+    <div class="search">
+        <input class="search-bar" type="text" asp-for="Name" placeholder="Название"/>
+        <img class="search-optional-btn" src="images/snatch.svg"/>
+        <input type="submit" value="Найти" class="btn btn-outline-dark search-btn" />
+        <div class="search-optional">
+            <div class="search-additional-line">
+                <div class="form-group">
+                    <label asp-for="Year">Год выхода</label>
+                    <input asp-for="Year"/>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Director">Режисер</label>
+                    <input asp-for="Director"/>
+                </div>
+            </div>
+            <div class="search-additional-list">
+                @for (int i = 0; i < @Model.Genres.Count; i++)
+                {
+                    <li style="text-align: left; list-style: none">
+                        @Html.CheckBoxFor(m => m.Genres[i].IsSelected)
+                        @Html.LabelFor(m => m.Genres[i].Name, Model.Genres[i].Name.ToString())
+                        @Html.HiddenFor(m => m.Genres[i].Name)
+                    </li>
+                }
+            </div>
+        </div>
+    </div>
+</form>
+<div class="searcher-content">
+    @foreach (var film in (IEnumerable<FilmWithScore>)ViewBag.Films)
+    {
+        <div class="searcher-content-item">
+            <img src="data:image/jpeg;base64,@(Convert.ToBase64String(film.Film.Picture))"/>
+            <div>
+                <h3>
+                    <a href="@Url.Action("ShowFilm", "Home", new {filmId = @film.Film.FilmId})">@film.Film.RusName</a> <span>@film.Film.Year</span>
+                </h3>
+                <p>@Math.Round(film.Score.AvgScore, 2)</p>
+            </div>
+        </div>
+    }
+</div>

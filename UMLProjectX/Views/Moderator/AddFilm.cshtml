@@ -1,0 +1,46 @@
+﻿@model UMLProjectX.Models.FilmModel
+
+<form asp-action="AddFilm" asp-controller="Moderator" asp-anti-forgery="true" enctype="multipart/form-data">
+    <div class="validation" asp-validation-summary="ModelOnly" />
+    <div>
+        <div class="search-additional-line">
+            <div class="form-group" style="margin-right: 5px;">
+                <input type="text" asp-for="RusName" placeholder="Название"/>
+                <span asp-validation-for="RusName"/>
+            </div>
+            <div class="form-group" style="margin-right: 5px;">
+                <label asp-for="Year">Год выхода</label>
+                <input asp-for="Year" placeholder="Год выхода" />
+                <span asp-validation-for="Year" />
+            </div>
+            <div class="form-group" style="margin-right: 5px;">
+                <input asp-for="Director" placeholder="Режиссер"/>
+                <span asp-validation-for="Director"/>
+            </div>
+
+        </div>
+        <div class="search-additional-list">
+            @for (int i = 0; i < @Model.Genres.Count; i++)
+            {
+                <li style="text-align: left; list-style: none">
+                    @Html.CheckBoxFor(m => m.Genres[i].IsSelected)
+                    @Html.LabelFor(m => m.Genres[i].Name, Model.Genres[i].Name.ToString())
+                    @Html.HiddenFor(m => m.Genres[i].Name)
+                </li>
+            }
+        </div>
+        <div class="form-group">
+            <label asp-for="Description">Описание</label>
+            <textarea asp-for="Description" style="width: 600px; height: 150px; resize: both"></textarea>
+            <span asp-validation-for="Description"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="Picture">Логотип</label>
+            <input type="file" asp-for="Picture"/>
+            <span asp-validation-for="Picture"/>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Добавить" class="btn btn-outline-dark"/>
+        </div>
+    </div>
+</form>
