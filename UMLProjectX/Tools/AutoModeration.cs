@@ -19,7 +19,7 @@ namespace UMLProjectX.Tools
         {
             if (string.IsNullOrEmpty(text))
                 return true;
-            var regexedText = Regex.Replace(text, "[-.?!)(,:;]", "");
+            var regexedText = Regex.Replace(text.ToLower(), "[-.?!)(,:;]", "");
             var splittedText = regexedText.Split(' ');
             var banned = _db.ReadBanWords().Select(x => x.Content).ToList();
 

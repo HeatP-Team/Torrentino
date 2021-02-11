@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using UMLProjectX.Models;
@@ -34,7 +36,12 @@ namespace UMLProjectX.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _db.UserValid(model.Login, model.Password);
+                var password = string.Empty;
+                using (var sha = SHA256.Create())
+                {
+                    password = Encoding.UTF8.GetString(sha.ComputeHash(Encoding.UTF8.GetBytes(model.Password)));
+                }
+                var user = await _db.UserValid(model.Login, password);
                 if (user != null)
                 {
                     await Authenticate(user);
@@ -59,7 +66,12 @@ namespace UMLProjectX.Controllers
             {
                 if (!_db.ContainsLogin(model.Login))
                 {
-                    await Authenticate(_db.AddUser(new User { Login = model.Login, Password = model.Password, Role = "default" }));
+                    var password = string.Empty;
+                    using (var sha = SHA256.Create())
+                    {
+                        password = Encoding.UTF8.GetString(sha.ComputeHash(Encoding.UTF8.GetBytes(model.Password)));
+                    }
+                    await Authenticate(_db.AddUser(new User { Login = model.Login, Password = password, Role = "default" }));
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -72,6 +84,8 @@ namespace UMLProjectX.Controllers
         [HttpGet]
         public IActionResult Profile(string login)
         {
+            if (string.IsNullOrEmpty(login))
+                login = User.Identity.Name;
             var user = _db.FindUserByLogin(login);
             var reviews = _db.FindReviewsForUser(user.UserId);
 

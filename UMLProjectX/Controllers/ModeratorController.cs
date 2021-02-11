@@ -45,6 +45,7 @@ namespace UMLProjectX.Controllers
         [HttpGet]
         public IActionResult AddBanWord()
         {
+            ViewBag.BanWords = _db.ReadBanWords();
             return View();
         }
 
@@ -73,6 +74,9 @@ namespace UMLProjectX.Controllers
 
         public IActionResult EditFilm(FilmModel model)
         {
+            if (!_autoModeration.PassAutoModeration(model.Description))
+                return RedirectToAction("EditDeleteFilm", "Moderator", new {filmId = model.FilmId});
+
             var res = _db.EditFilm(model);
 
             return RedirectToAction("EditDeleteFilm", "Moderator", new {filmId = res.FilmId});
@@ -85,9 +89,9 @@ namespace UMLProjectX.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult BanUser(int userId)
+        public IActionResult BanUser(string login)
         {
-            _db.DeleteUserById(userId);
+            _db.DeleteUserByLogin(login);
 
             return RedirectToAction("Index", "Home");
         }

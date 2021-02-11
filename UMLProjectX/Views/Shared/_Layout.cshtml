@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -29,9 +30,22 @@
                         }
                         else
                         {
-                            <li>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Moderator" asp-action="AddFilm">AddFilm</a>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
                             </li>
+                            @if (((ClaimsIdentity)User.Identity).Claims
+                              .Where(c => c.Type == ClaimTypes.Role)
+                              .Select(c => c.Value)
+                              .Contains("mod"))
+                            {
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Moderator" asp-action="AddFilm">Add film</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Moderator" asp-action="AddBanWord">Add ban word</a>
+                                </li>
+
+                            }
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                             </li>

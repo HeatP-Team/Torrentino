@@ -1,4 +1,5 @@
 ﻿@using UMLProjectX.DAL.Models
+@using System.Security.Claims
 <div>
     <h3>
         @ViewBag.Login
@@ -7,7 +8,7 @@
     {
         <div class="film-review-main">
             <div>
-                @review.FilmName, @review.Time <span style="padding-left: 50px"><b>@review.Score</b></span>
+                <a href="@Url.Action("ShowFilm", "Home", new {filmId = review.FilmId})">@review.FilmName</a>, @review.Time <span style="padding-left: 50px"><b>@review.Score</b></span>
             </div>
             <div>
                 @review.ReviewText
@@ -15,7 +16,10 @@
         </div>
     }
     
-    @if (ViewBag.Mod)
+    @if (((ClaimsIdentity) User.Identity).Claims
+        .Where(c => c.Type == ClaimTypes.Role)
+        .Select(c => c.Value)
+        .Contains("mod"))
     {
         <a href="@Url.Action("BanUser", "Moderator", new {login = @ViewBag.Login})">Заблокировать пользователя</a>
     }

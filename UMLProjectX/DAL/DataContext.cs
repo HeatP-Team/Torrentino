@@ -150,13 +150,21 @@ namespace UMLProjectX.DAL
                 film.Genres |= (int)genre.Name;
             }
 
-            byte[] imageData = null;
-            using (var binaryReader = new BinaryReader(filmModel.Picture.OpenReadStream()))
+            if (filmModel.Picture != null)
             {
-                imageData = binaryReader.ReadBytes((int)filmModel.Picture.Length);
-            }
+                byte[] imageData = null;
+                using (var binaryReader = new BinaryReader(filmModel.Picture.OpenReadStream()))
+                {
+                    imageData = binaryReader.ReadBytes((int)filmModel.Picture.Length);
+                }
 
-            film.Picture = imageData;
+                film.Picture = imageData;
+            }
+            else
+            {
+                var oldfilm = FindFilmById(film.FilmId);
+                film.Picture = oldfilm.Picture;
+            }
 
             var newVal = Films.Update(film);
 
@@ -236,6 +244,8 @@ namespace UMLProjectX.DAL
 
         public BanWord AddBanWord(BanWord word)
         {
+            if (BanWords.Select(x => x.Content).Contains(word.Content))
+                return word;
             var ret = BanWords.Add(word);
             SaveChanges();
 
