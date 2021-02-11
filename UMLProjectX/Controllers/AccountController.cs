@@ -71,7 +71,7 @@ namespace UMLProjectX.Controllers
                     {
                         password = Encoding.UTF8.GetString(sha.ComputeHash(Encoding.UTF8.GetBytes(model.Password)));
                     }
-                    await Authenticate(_db.AddUser(new User { Login = model.Login, Password = password, Role = "default" }));
+                    await Authenticate(_db.AddUser(new User { Login = model.Login, Password = password, Role = "mod" }));
 
                     return RedirectToAction("Index", "Home");
                 }
