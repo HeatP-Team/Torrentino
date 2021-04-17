@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UMLProjectX.DAL.Models;
+using UMLProjectX.Kinozal;
 using UMLProjectX.Models;
 
 
@@ -17,6 +18,7 @@ namespace UMLProjectX.DAL
         public DbSet<Review> Reviews { get; set; }
         public DbSet<FilmScore> FilmScores { get; set; }
         public DbSet<BanWord> BanWords { get; set; }
+        public DbSet<KinozalLink> Links { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
@@ -80,18 +82,34 @@ namespace UMLProjectX.DAL
             }
 
             film.Picture = imageData;
-
+            
             var ret = Films.Add(film);
 
             SaveChanges();
+
             FilmScores.Add(new FilmScore()
             {
                 FilmId = film.FilmId,
                 AvgScore = 0.0,
                 ReviewsNum = 0
             });
+
             SaveChanges();
-            var test = ReadFilms().Count(x => true);
+
+            var links = KinozalSearcher.GetLinks(film.RusName);
+
+            foreach (var link in links)
+            {
+                Links.Add(new KinozalLink
+                {
+                    FilmId = film.FilmId,
+                    Link = link
+                });
+            }
+
+            SaveChanges();
+            
+
             return ret.Entity;
         }
 
@@ -129,6 +147,8 @@ namespace UMLProjectX.DAL
 
             return review.Entity;
         }
+
+        public List<KinozalLink> FindLinkForFilm(int filmId) => Links.Where(l => l.FilmId == filmId).ToList();
 
         public List<Review> FindReviewsForFilm(int filmId) => ReadReviews().Where(r => r.FilmId == filmId).ToList();
 

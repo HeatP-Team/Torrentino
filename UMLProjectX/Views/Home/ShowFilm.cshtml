@@ -26,12 +26,22 @@
             <p>
                 <b>Описание: </b> @ViewBag.Description
             </p>
+
             <p>
                 <a href="@ViewBag.Kinopoisk">Кинопоиск</a>
             </p>
             <p>
                 <a href="@ViewBag.Ivi">Иви</a>
             </p>
+            <p>
+                <ul>
+                    @foreach (var link in @ViewBag.KinozalLinks)
+                    {
+                        <li><a href=@link.Link>@link.Link</a></li>
+                    }
+                </ul>
+            </p>
+
             @if (((ClaimsIdentity) User.Identity).Claims
                 .Where(c => c.Type == ClaimTypes.Role)
                 .Select(c => c.Value)

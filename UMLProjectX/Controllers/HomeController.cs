@@ -74,6 +74,8 @@ namespace UMLProjectX.Controllers
             ViewBag.FilmId = filmId;
             ViewBag.Kinopoisk = _kinopoisk.GetLinkByFilmName(film.RusName);
             ViewBag.Ivi = _ivi.GetLinkByFilmName(film.RusName);
+            ViewBag.KinozalLinks = _db.FindLinkForFilm(filmId);
+
             var genres = new List<string>();
             foreach (var genre in Enum.GetValues(typeof(Genre)).Cast<Genre>())
             {

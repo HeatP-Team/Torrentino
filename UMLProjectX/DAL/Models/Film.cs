@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace UMLProjectX.DAL.Models
 {
@@ -15,5 +12,7 @@ namespace UMLProjectX.DAL.Models
         public string Description { get; set; }
         public byte[] Picture { get; set; }
         public virtual ICollection<Review> Review { get; } = new List<Review>();
+
+        public virtual ICollection<KinozalLink> KinozalLinks { get; } = new List<KinozalLink>();
     }
 }
