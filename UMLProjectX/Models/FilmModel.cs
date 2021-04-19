@@ -13,7 +13,7 @@ namespace UMLProjectX.Models
         [Required(ErrorMessage = "Не указано название")]
         public string RusName { get; set; }
         [Required(ErrorMessage = "Не указан год выхода")]
-        public int Year { get; set; }
+        public string Year { get; set; }
         public List<GenreCheckBox> Genres { get; set; }
         [Required(ErrorMessage = "Не указан режисcер")]
         public string Director { get; set; }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using UMLProjectX.DAL.Models;
@@ -65,7 +66,7 @@ namespace UMLProjectX.DAL
             var film = new Film()
             {
                 RusName = filmModel.RusName,
-                Year = filmModel.Year,
+                Year = filmModel.Year.ToString(),
                 Description = filmModel.Description,
                 Director = filmModel.Director,
                 Genres = 0,
@@ -98,12 +99,21 @@ namespace UMLProjectX.DAL
 
             var links = KinozalSearcher.GetLinks(film.RusName);
 
+            film.Year = links.First().Year;
+
+            using (var webClient = new WebClient())
+            {
+                film.Picture = webClient.DownloadData(links.First().Poster);
+            }
+
             foreach (var link in links)
             {
                 Links.Add(new KinozalLink
                 {
                     FilmId = film.FilmId,
-                    Link = link
+                    Link = link.Link,
+                    Quality = link.Quality,
+                    Size = link.Size
                 });
             }
 

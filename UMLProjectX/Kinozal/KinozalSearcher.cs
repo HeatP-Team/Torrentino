@@ -15,11 +15,11 @@ namespace UMLProjectX.Kinozal
         private const string MainUrl = "https://kinozal-tv.appspot.com/";
         private static readonly HtmlWeb Web = new();
 
-        public static List<string> GetLinks(string filmName)
+        public static IList<FilmInfo> GetLinks(string filmName)
         {
             var res = GetInfos(filmName);
 
-            return new List<string> {"111", "222", "333"};
+            return res;
         }
 
         private static IList<FilmInfo> GetInfos(string filmName)
@@ -29,8 +29,9 @@ namespace UMLProjectX.Kinozal
             var doc = GetDoc(url);
 
             return doc.DocumentNode.CssSelect("tr.bg > .nam > a")
-                //.AsParallel()
+                .AsParallel()
                 .Select(node => GetFilmInfo(MainUrl + node.Attributes["href"].Value))
+                .Take(5)
                 .ToArray();
         }
         private static FilmInfo GetFilmInfo(string filmUrl)
@@ -39,15 +40,11 @@ namespace UMLProjectX.Kinozal
 
             var page = GetDoc(filmUrl).DocumentNode;
 
-            var res = page.CssSelect("h1");
-
             var fullName = page.CssSelect("h1 > a").First().InnerText.Split(" / ");
 
-            //TODO: cringeParse
-
-            var fullInfo = page.CssSelect("#tabs > b")
-                .First().InnerText.Split("<br>")
-                .Select(a => a.Split("\n")[1])
+            var fullInfo = page.CssSelect("#tabs")
+                .First().InnerText.Split("\r\n")
+                .Select(str => str[(str.IndexOf(':') + 2)..])
                 .ToArray();
 
             return new FilmInfo
@@ -55,7 +52,7 @@ namespace UMLProjectX.Kinozal
                 Name = fullName[0],
                 Year = fullName[2],
                 Quality = fullInfo[0],
-                Size = fullInfo[3],
+                Size = fullInfo[3][..^2] + "GB",
                 Link = filmUrl,
                 Poster = page.CssSelect("img.p200").First().Attributes["src"].Value
             };

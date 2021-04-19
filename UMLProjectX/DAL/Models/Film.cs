@@ -6,7 +6,7 @@ namespace UMLProjectX.DAL.Models
     {
         public int FilmId { get; set; }
         public string RusName { get; set; }
-        public int Year { get; set; }
+        public string Year { get; set; }
         public int Genres { get; set; }
         public string Director { get; set; }
         public string Description { get; set; }

@@ -22,7 +22,7 @@ namespace UMLProjectX.Tools
                     .Select(x => new FilmWithScore(x, _db.FindFilmScoreByFilmId(x.FilmId)));
             return _db.ReadFilms()
                 .Where(x => IsNullOrEmpty(dto.Name) || x.RusName.Contains(dto.Name))
-                .Where(x => dto.Year == null || dto.Year == 0|| x.Year == dto.Year)
+                .Where(x => dto.Year == null || dto.Year == 0|| x.Year == dto.Year.ToString())
                 .Where(x => dto.Genres == null || dto.Genres == 0 || (x.Genres & dto.Genres) == dto.Genres)
                 .Where(x => IsNullOrEmpty(dto.Director) || x.Director.Contains(dto.Director))
                 .Join(_db.FilmScores, f => f.FilmId, fs => fs.FilmId, (f, fs) => new FilmWithScore(f, fs));

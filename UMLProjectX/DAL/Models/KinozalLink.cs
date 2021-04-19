@@ -14,5 +14,9 @@ namespace UMLProjectX.DAL.Models
         public Film Film { get; set; }
 
         public string Link { get; set; }
+
+        public string Size { get; set; }
+
+        public string Quality { get; set; }
     }
 }

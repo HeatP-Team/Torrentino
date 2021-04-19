@@ -37,7 +37,11 @@
                 <ul>
                     @foreach (var link in @ViewBag.KinozalLinks)
                     {
-                        <li><a href=@link.Link>@link.Link</a></li>
+                        <li>
+                            <a href=@link.Link>Link</a> - 
+
+                            @link.Quality @link.Size
+                        </li>
                     }
                 </ul>
             </p>
