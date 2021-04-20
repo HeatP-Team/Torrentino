@@ -30,11 +30,12 @@ namespace UMLProjectX.Kinozal
 
             return doc.DocumentNode.CssSelect("tr.bg > .nam > a")
                 .AsParallel()
-                .Select(node => GetFilmInfo(MainUrl + node.Attributes["href"].Value))
+                .Select(node => GetFilmInfo(MainUrl + node.Attributes["href"].Value, filmName))
+                .Where(kek => kek is not null)
                 .Take(5)
                 .ToArray();
         }
-        private static FilmInfo GetFilmInfo(string filmUrl)
+        private static FilmInfo GetFilmInfo(string filmUrl, string filmName)
         {
             filmUrl = filmUrl.Remove(filmUrl.IndexOf("amp;", StringComparison.InvariantCultureIgnoreCase), 4);
 
@@ -49,8 +50,7 @@ namespace UMLProjectX.Kinozal
 
             return new FilmInfo
             {
-                Name = fullName[0],
-                Year = fullName[2],
+                
                 Quality = fullInfo[0],
                 Size = fullInfo[3][..^2] + "GB",
                 Link = filmUrl,
@@ -76,6 +76,29 @@ namespace UMLProjectX.Kinozal
             doc.LoadHtml(html);
 
             return doc;
+        }
+
+
+        public static KinopoiskInfo GetKinopoiskInfo(string filmName)
+        {
+            var doc = Web.Load($"https://www.kinopoisk.ru/index.php?kp_query={filmName}");
+
+            var info = doc.DocumentNode.CssSelect("div.most_wanted > div.info").First();
+
+            //var link = doc.DocumentNode.CssSelect("div.most_wanted > div.info > p.name > a")
+            //    .First().Attributes["href"].Value;
+
+            //doc = Web.Load($"https://www.kinopoisk.ru{link}");
+
+            var result = new KinopoiskInfo()
+            {
+                Year = info.CssSelect("p.name > span.year").First().InnerText,
+                Director = info.CssSelect("span.gray").Skip(1).First().CssSelect("i.director > a").First().InnerText,
+                //PosterLink = "https://www.kinopoisk.ru" + doc.DocumentNode.CssSelect("div.most_wanted > p.pic > a > img").First().Attributes[2].Value
+                //PosterLink = doc.DocumentNode.CssSelect("img.film-poster").First().Attributes["src"].Value
+            };
+
+            return result;
         }
     }
 }

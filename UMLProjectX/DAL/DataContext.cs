@@ -63,27 +63,22 @@ namespace UMLProjectX.DAL
 
         public Film AddFilm(FilmModel filmModel)
         {
+            var kinozalInfo = KinozalSearcher.GetKinopoiskInfo(filmModel.RusName);
+
             var film = new Film()
             {
                 RusName = filmModel.RusName,
-                Year = filmModel.Year.ToString(),
+                Year = kinozalInfo.Year ?? filmModel.Year,
                 Description = filmModel.Description,
-                Director = filmModel.Director,
+                Director = kinozalInfo.Director ?? filmModel.Director,
                 Genres = 0,
             };
+
             foreach (var genre in filmModel.Genres.Where(g => g.IsSelected))
             {
                 film.Genres |= (int)genre.Name;
             }
 
-            byte[] imageData = null;
-            using (var binaryReader = new BinaryReader(filmModel.Picture.OpenReadStream()))
-            {
-                imageData = binaryReader.ReadBytes((int)filmModel.Picture.Length);
-            }
-
-            film.Picture = imageData;
-            
             var ret = Films.Add(film);
 
             SaveChanges();
@@ -99,11 +94,16 @@ namespace UMLProjectX.DAL
 
             var links = KinozalSearcher.GetLinks(film.RusName);
 
-            film.Year = links.First().Year;
-
-            using (var webClient = new WebClient())
+            if (!string.IsNullOrEmpty(links[0].Poster))
             {
-                film.Picture = webClient.DownloadData(links.First().Poster);
+                using var webClient = new WebClient();
+                film.Picture = webClient.DownloadData(links[0].Poster);
+            }
+
+            if (film.Picture is null && film.Picture is not null)
+            {
+                using var binaryReader = new BinaryReader(filmModel.Picture.OpenReadStream());
+                film.Picture = binaryReader.ReadBytes((int)filmModel.Picture.Length);
             }
 
             foreach (var link in links)

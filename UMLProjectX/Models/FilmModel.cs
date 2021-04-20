@@ -12,15 +12,17 @@ namespace UMLProjectX.Models
     {
         [Required(ErrorMessage = "Не указано название")]
         public string RusName { get; set; }
-        [Required(ErrorMessage = "Не указан год выхода")]
+
         public string Year { get; set; }
+
         public List<GenreCheckBox> Genres { get; set; }
-        [Required(ErrorMessage = "Не указан режисcер")]
+
         public string Director { get; set; }
-        [Required(ErrorMessage = "Не указано описание")]
+
         public string Description { get; set; }
-        [Required(ErrorMessage = "Не добавлена картинка")]
+
         public IFormFile Picture { get; set; }
+
         public int FilmId { get; set; }
 
         public FilmModel()
