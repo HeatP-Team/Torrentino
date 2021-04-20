@@ -50,7 +50,6 @@ namespace UMLProjectX.Kinozal
 
             return new FilmInfo
             {
-                
                 Quality = fullInfo[0],
                 Size = fullInfo[3][..^2] + "GB",
                 Link = filmUrl,
@@ -92,7 +91,7 @@ namespace UMLProjectX.Kinozal
 
             var result = new KinopoiskInfo()
             {
-                Year = info.CssSelect("p.name > span.year").First().InnerText,
+                Year = info.CssSelect("p.name > span.year").First().InnerText.Substring(0, 4),
                 Director = info.CssSelect("span.gray").Skip(1).First().CssSelect("i.director > a").First().InnerText,
                 //PosterLink = "https://www.kinopoisk.ru" + doc.DocumentNode.CssSelect("div.most_wanted > p.pic > a > img").First().Attributes[2].Value
                 //PosterLink = doc.DocumentNode.CssSelect("img.film-poster").First().Attributes["src"].Value

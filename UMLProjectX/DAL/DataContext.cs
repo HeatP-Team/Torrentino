@@ -63,14 +63,14 @@ namespace UMLProjectX.DAL
 
         public Film AddFilm(FilmModel filmModel)
         {
-            var kinozalInfo = KinozalSearcher.GetKinopoiskInfo(filmModel.RusName);
+            var kinopoiskInfo = KinozalSearcher.GetKinopoiskInfo(filmModel.RusName);
 
             var film = new Film()
             {
                 RusName = filmModel.RusName,
-                Year = kinozalInfo.Year ?? filmModel.Year,
+                Year = kinopoiskInfo.Year ?? filmModel.Year,
                 Description = filmModel.Description,
-                Director = kinozalInfo.Director ?? filmModel.Director,
+                Director = kinopoiskInfo.Director ?? filmModel.Director,
                 Genres = 0,
             };
 
